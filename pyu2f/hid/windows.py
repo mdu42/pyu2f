@@ -169,9 +169,7 @@ def FillDeviceAttributes(device, descriptor):
 
   buf = ctypes.create_string_buffer(1024)
   result = hid.HidD_GetProductString(device, buf, 1024)
-
-  """if not result:
-    raise ctypes.WinError()"""
+  # may return False for some HID devices, checks removed. The value seems not used anyway.
 
   descriptor.vendor_id = attributes.VendorID
   descriptor.product_id = attributes.ProductID

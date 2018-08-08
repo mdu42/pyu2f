@@ -169,7 +169,8 @@ def FillDeviceAttributes(device, descriptor):
 
   buf = ctypes.create_string_buffer(1024)
   result = hid.HidD_GetProductString(device, buf, 1024)
-  # may return False for some HID devices, checks removed. The value seems not used anyway.
+  if not result:
+    raise ctypes.WinError()
 
   descriptor.vendor_id = attributes.VendorID
   descriptor.product_id = attributes.ProductID
@@ -309,6 +310,8 @@ class WindowsHidDevice(base.HidDevice):
         FillDeviceAttributes(device, descriptor)
         FillDeviceCapabilities(device, descriptor)
         out.append(descriptor.ToPublicDict())
+      except WindowsError as e:
+        continue # skip this device
       finally:
         kernel32.CloseHandle(device)
 
